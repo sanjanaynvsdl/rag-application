@@ -10,7 +10,11 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.5.2",
-    "wrangler": "^3.60.3",
-    "vitest": "2.0.5"
+    "vitest": "2.0.5",
+    "wrangler": "^3.60.3"
+  },
+  "dependencies": {
+    "@cloudflare/ai": "^1.2.2",
+    "hono": "^4.6.12"
   }
 }

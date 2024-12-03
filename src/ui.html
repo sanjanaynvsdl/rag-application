@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat | Cloudflare RAG Example</title>
+  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0c0c0c 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+  max-width: 400px;
+  width: 80%;
+  margin: 1rem auto; 
+  padding: 1.5rem;
+  background: rgba(45, 46, 47, 0.85);
+  backdrop-filter: blur(15px);
+  border-radius: 1rem;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); 
+  position: relative; 
+  top: -20px;
+}
+
+
+
+    .nav-links {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 0.75rem 0;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      background: rgba(28, 139, 213, 0.2);
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      color: #fff;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 200px;
+    }
+
+    button {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      transform: scale(1.05);
+    }
+
+    #result {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.5rem;
+      min-height: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="text-2xl font-bold text-center mb-4">Retrieval Augmented Generation (RAG)</h1>
+
+    <nav class="nav-links">
+      <a href="/ui">Query</a>
+      <a href="/notes">Notes</a>
+      <a href="/write">Add note</a>
+    </nav>
+
+    <form hx-get="/" hx-trigger="submit" hx-target="#result" class="mt-4">
+      <textarea 
+        name="text" 
+        required="true" 
+        placeholder="Ask the AI anything..."
+        rows="3"
+      ></textarea>
+      <button type="submit">Submit Question</button>
+    </form>
+
+    <div id="result"></div>
+  </div>
+</body>
+
+</html>

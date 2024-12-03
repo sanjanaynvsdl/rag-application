@@ -8,8 +8,17 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import {Ai} from '@cloudflare/ai';
+import {Hono} from 'hono';
+import ui from './ui.html';
+
+const app = new Hono();
+
+//1. The UI for the asking questions (this loads the ui for the questions)
+app.get('/', (c) => c.html(ui));
+
 export default {
 	async fetch(request, env, ctx) {
-		return new Response('Hello World!');
+		return app.fetch(request, env, ctx);
 	},
 };
