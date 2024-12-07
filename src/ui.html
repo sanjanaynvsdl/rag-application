@@ -92,6 +92,19 @@
       border-radius: 0.5rem;
       min-height: 40px;
     }
+
+    .htmx-indicator {
+      display: none;
+    }
+
+    .htmx-request .htmx-indicator {
+      display: inline;
+    }
+
+    .htmx-request.button {
+      opacity: 0.7;
+      cursor: wait;
+    }
   </style>
 </head>
 
@@ -100,23 +113,40 @@
     <h1 class="text-2xl font-bold text-center mb-4">Retrieval Augmented Generation (RAG)</h1>
 
     <nav class="nav-links">
-      <a href="/ui">Query</a>
-      <a href="/notes">Notes</a>
+      <a href="/">Query</a>
+      <!-- <a href="/notes">Notes</a> -->
       <a href="/write">Add note</a>
     </nav>
 
-    <form hx-get="/" hx-trigger="submit" hx-target="#result" class="mt-4">
+    <form hx-get="/query" 
+      hx-trigger="submit" 
+      hx-target="#result"
+      hx-indicator="#loading"
+      enctype="application/x-www-form-urlencoded"
+      class="mt-4">
       <textarea 
         name="text" 
         required="true" 
         placeholder="Ask the AI anything..."
         rows="3"
       ></textarea>
-      <button type="submit">Submit Question</button>
+      <button type="submit" class="relative">
+        <span>Submit Question</span>
+        <span id="loading" class="htmx-indicator absolute right-4">
+          Thinking...
+        </span>
+      </button>
     </form>
 
-    <div id="result"></div>
+    <div id="result" class="mt-4 transition-all duration-200"></div>
   </div>
+
+  <script>
+    document.body.addEventListener('htmx:responseError', function(evt) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `<div class="text-red-500">Error: ${evt.detail.error}</div>`;
+    });
+  </script>
 </body>
 
 </html>

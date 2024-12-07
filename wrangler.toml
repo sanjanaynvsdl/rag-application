@@ -9,11 +9,9 @@ binding = "DB"
 database_name = "rag-application-custom"
 database_id = "445ea402-dcf4-49f3-9831-d9745ccf6339"
 
-
 [[vectorize]]
 binding = "VECTORIZE"
-index_name = "rag-application-custom-index-v2"
+index_name = "rag-application-custom-index-v3"
 
 [ai]
 binding = "AI"
-

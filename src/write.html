@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Write | Cloudflare RAG Example</title>
+  <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+  <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0c0c0c 100%);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 400px;
+      width: 70%;
+      margin: 1rem auto;
+      padding: 1.5rem;
+      background: rgba(45, 46, 47, 0.85);
+      backdrop-filter: blur(15px);
+      border-radius: 1rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      position: relative;
+      top: -20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 0.75rem 0;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      background: rgba(28, 139, 213, 0.2);
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.5rem;
+      color: #fff;
+      resize: vertical;
+      min-height: 80px;
+      max-height: 200px;
+    }
+
+    button {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding:1rem;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #1e40af, #2563eb);
+      transform: scale(1.05);
+    }
+
+    .htmx-indicator {
+      display: none;
+    }
+
+    .htmx-request .htmx-indicator {
+      display: inline;
+    }
+
+    .htmx-request.button {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    #message {
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 class="text-2xl font-bold text-center mb-4">Write a new note</h1>
+
+    <nav class="nav-links">
+      <a href="/">Query</a>
+      <!-- <a href="/notes">Notes</a> -->
+      <a href="/write">Add note</a>
+    </nav>
+
+    <form hx-post="/write" 
+      hx-ext="json-enc"
+      hx-target="#message"
+      hx-indicator="#loading"
+      hx-on::after-request="this.reset()"
+      class="space-y-4">
+    <textarea 
+        name="text" 
+        required="true"
+        minlength="10"
+        maxlength="1000"
+        placeholder="Write a new note to add to the AI's knowledge base (10-1000 characters)"
+        rows="3"
+        class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+    ></textarea>
+    <button type="submit" 
+            class="relative w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+        <span>Submit Note</span>
+        <span id="loading" class="htmx-indicator absolute right-4">
+            Saving...
+        </span>
+    </button>
+</form>
+
+    <div id="message" class="mt-4 text-center transition-all duration-300"></div>
+  </div>
+
+  <script>
+    document.body.addEventListener('htmx:beforeRequest', function(evt) {
+        const textarea = evt.detail.elt.querySelector('textarea');
+        if (textarea) {
+            const text = textarea.value.trim();
+            if (text.length < 10 || text.length > 1000) {
+                evt.preventDefault();
+                document.getElementById('message').innerHTML = 
+                    '<div class="text-red-500">Note must be between 10 and 1000 characters</div>';
+                return;
+            }
+        }
+    });
+    
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        const messageDiv = document.getElementById('message');
+        if (evt.detail.successful) {
+            messageDiv.innerHTML = '<div class="text-green-400 fade-out">Note saved successfully!</div>';
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        } else {
+            const error = evt.detail.xhr?.responseJSON?.error || 'Unknown error occurred';
+            messageDiv.innerHTML = `<div class="text-red-500">Error: ${error}</div>`;
+        }
+    });
+    </script>
+</body>
+
+</html>
